@@ -4,24 +4,30 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+
   <servlet>
   	<servlet-name>myuserServlet</servlet-name>
-  	<display-name>myuserServlet</display-name>
-  	<description></description>
   	<servlet-class>com.hms.user.servlet.myuserServlet</servlet-class>
   </servlet>
+
   <servlet>
   	<servlet-name>MyNewServlet</servlet-name>
-  	<display-name>MyNewServlet</display-name>
-  	<description></description>
   	<servlet-class>com.hms.user.servlet.MyNewServlet</servlet-class>
   </servlet>
+
   <servlet-mapping>
   	<servlet-name>myuserServlet</servlet-name>
   	<url-pattern>/myuserServlet</url-pattern>
   </servlet-mapping>
+
   <servlet-mapping>
   	<servlet-name>MyNewServlet</servlet-name>
   	<url-pattern>/MyNewServletRegisterUser</url-pattern>
   </servlet-mapping>
+
+  
+  <welcome-file-list>
+      <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
 </web-app>
