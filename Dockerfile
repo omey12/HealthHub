@@ -2,8 +2,9 @@ FROM maven:3.9.6-eclipse-temurin-11 AS build
 
 WORKDIR /app
 
-COPY HealthHub/pom.xml .
+COPY pom.xml .
 COPY HealthHub/src/main ./src/main
+COPY src/main/webapp/WEB-INF ./src/main/webapp/WEB-INF
 
 RUN mvn clean package -DskipTests
 
