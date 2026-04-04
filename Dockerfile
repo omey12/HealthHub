@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY pom.xml .
 COPY HealthHub/src/main ./src/main
-COPY src/main/webapp/WEB-INF ./src/main/webapp/WEB-INF
 
 RUN mvn clean package -DskipTests
 
