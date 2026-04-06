@@ -17,33 +17,42 @@ public class UserDAO {
 	// ✅ REGISTER
 	public boolean userRegister(User user) {
 
-		boolean f = false;
+    boolean f = false;
 
-		try {
+    try {
 
-			String sql = "insert into user_details(full_name, email, password) values(?,?,?)";
+        if(conn == null){
+            System.out.println("❌ DB Connection NULL hai");
+            return false;
+        }
 
-			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, user.getFullName().trim());
-			pstmt.setString(2, user.getEmail().trim());
-			pstmt.setString(3, user.getPassword().trim());
+        String sql = "insert into user_details(full_name, email, password) values(?,?,?)";
 
-			int i = pstmt.executeUpdate();   // 🔥 IMPORTANT
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, user.getFullName());
+        pstmt.setString(2, user.getEmail());
+        pstmt.setString(3, user.getPassword());
 
-			if (i == 1) {
-				f = true;
-				System.out.println("✅ User inserted successfully");
-			} else {
-				System.out.println("❌ Insert failed");
-			}
+        System.out.println("👉 Executing query...");
 
-		} catch (Exception e) {
-			System.out.println("🔥 ERROR IN REGISTER:");
-			e.printStackTrace();
-		}
+        int i = pstmt.executeUpdate();
 
-		return f;
-	}
+        System.out.println("👉 Rows affected: " + i);
+
+        if (i == 1) {
+            f = true;
+            System.out.println("✅ Insert success");
+        } else {
+            System.out.println("❌ Insert failed");
+        }
+
+    } catch (Exception e) {
+        System.out.println("🔥 ERROR:");
+        e.printStackTrace();
+    }
+
+    return f;
+}
 
 	// ✅ LOGIN
 	public User loginUser(String email, String password) {
