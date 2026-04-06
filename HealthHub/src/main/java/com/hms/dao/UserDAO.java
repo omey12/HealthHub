@@ -48,41 +48,37 @@ public class UserDAO {
 	// and return that specific users object.
 	public User loginUser(String email, String password) {
 
-		User user = null;
+    User user = null;
 
-		try {
-			String sql = "select * from user_details where email=? and password=?";
+    try {
+        String sql = "select * from user_details where email=? and password=?";
 
-			PreparedStatement pstmt = this.conn.prepareStatement(sql);
-			pstmt.setString(1, email);
-			pstmt.setString(2, password);
+        PreparedStatement pstmt = this.conn.prepareStatement(sql);
+        pstmt.setString(1, email);
+        pstmt.setString(2, password);
 
-			ResultSet resultSet = pstmt.executeQuery();
-			while (resultSet.next()) {
-				// if any row available, then fetch the data of that row...
+        ResultSet resultSet = pstmt.executeQuery();
 
-				// create new user object
-				user = new User();
+        // ❗ while ki jagah if use karo
+        if (resultSet.next()) {
 
-				// fetch data one by one from db table and set it/bind it to user's objects.
-				// e.g fetch id and set to user object
-				// user.setId(resultSet.getInt(1));or below line both are same
-				// (1) means db table colm index number 1 which is id
-				// getString() takes both column indexNumber or columnLabel name...
-				user.setId(resultSet.getInt("id"));
-				user.setFullName(resultSet.getString("full_name"));
-				user.setEmail(resultSet.getString("email"));
-				user.setPassword(resultSet.getString("password"));
+            user = new User();
 
-			}
+            user.setId(resultSet.getInt("id"));
+            user.setFullName(resultSet.getString("full_name"));
+            user.setEmail(resultSet.getString("email"));
+            user.setPassword(resultSet.getString("password"));
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        } else {
+            System.out.println("❌ No user found (email/password mismatch)");
+        }
 
-		return user;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
 
-	}
+    return user;
+}
 
 	//check old password
 	public boolean checkOldPassword(int userId, String oldPassword) {
