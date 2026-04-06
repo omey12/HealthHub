@@ -11,76 +11,79 @@ public class UserDAO {
 	private Connection conn;
 
 	public UserDAO(Connection conn) {
-		super();
 		this.conn = conn;
 	}
 
+	// ✅ REGISTER
 	public boolean userRegister(User user) {
 
 		boolean f = false;
 
 		try {
-			// insert user in db
+
 			String sql = "insert into user_details(full_name, email, password) values(?,?,?)";
 
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, user.getFullName());
-			pstmt.setString(2, user.getEmail());
-			pstmt.setString(3, user.getPassword());
+			pstmt.setString(1, user.getFullName().trim());
+			pstmt.setString(2, user.getEmail().trim());
+			pstmt.setString(3, user.getPassword().trim());
 
-			pstmt.executeUpdate();
+			int i = pstmt.executeUpdate();   // 🔥 IMPORTANT
 
-			f = true; // if query execute successfully then f becomes true otherwise false...
+			if (i == 1) {
+				f = true;
+				System.out.println("✅ User inserted successfully");
+			} else {
+				System.out.println("❌ Insert failed");
+			}
 
 		} catch (Exception e) {
+			System.out.println("🔥 ERROR IN REGISTER:");
 			e.printStackTrace();
-
 		}
 
 		return f;
 	}
 
-	// when call loginUser() method, it checks that particular user available or
-	// not?
-	// if not available then return null user object.
-	// and if particular user available then, create User object(i.e user) and fetch
-	// all the data of that user from db
-	// and return that specific users object.
+	// ✅ LOGIN
 	public User loginUser(String email, String password) {
 
-    User user = null;
+		User user = null;
 
-    try {
-        String sql = "select * from user_details where email=? and password=?";
+		try {
 
-        PreparedStatement pstmt = this.conn.prepareStatement(sql);
-        pstmt.setString(1, email);
-        pstmt.setString(2, password);
+			String sql = "select * from user_details where email=? and password=?";
 
-        ResultSet resultSet = pstmt.executeQuery();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, email.trim());
+			pstmt.setString(2, password.trim());
 
-        // ❗ while ki jagah if use karo
-        if (resultSet.next()) {
+			ResultSet rs = pstmt.executeQuery();
 
-            user = new User();
+			if (rs.next()) {
 
-            user.setId(resultSet.getInt("id"));
-            user.setFullName(resultSet.getString("full_name"));
-            user.setEmail(resultSet.getString("email"));
-            user.setPassword(resultSet.getString("password"));
+				user = new User();
 
-        } else {
-            System.out.println("❌ No user found (email/password mismatch)");
-        }
+				user.setId(rs.getInt("id"));
+				user.setFullName(rs.getString("full_name"));
+				user.setEmail(rs.getString("email"));
+				user.setPassword(rs.getString("password"));
 
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+				System.out.println("✅ Login success");
 
-    return user;
-}
+			} else {
+				System.out.println("❌ Invalid email/password");
+			}
 
-	//check old password
+		} catch (Exception e) {
+			System.out.println("🔥 ERROR IN LOGIN:");
+			e.printStackTrace();
+		}
+
+		return user;
+	}
+
+	
 	public boolean checkOldPassword(int userId, String oldPassword) {
 
 		boolean f = false;
@@ -88,16 +91,15 @@ public class UserDAO {
 		try {
 
 			String sql = "select * from user_details where id=? and password=?";
-			PreparedStatement pstmt = this.conn.prepareStatement(sql);
+			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, userId);
-			pstmt.setString(2, oldPassword);
+			pstmt.setString(2, oldPassword.trim());
 
-			ResultSet resultSet = pstmt.executeQuery();
-			//System.out.println(resultSet);
-			while (resultSet.next()) {
+			ResultSet rs = pstmt.executeQuery();
+
+			if (rs.next()) {
 				f = true;
 			}
-		
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -106,7 +108,7 @@ public class UserDAO {
 		return f;
 	}
 
-	//change password
+	
 	public boolean changePassword(int userId, String newPassword) {
 
 		boolean f = false;
@@ -114,13 +116,15 @@ public class UserDAO {
 		try {
 
 			String sql = "update user_details set password=? where id=?";
-			PreparedStatement pstmt = this.conn.prepareStatement(sql);
-			pstmt.setString(1, newPassword);
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, newPassword.trim());
 			pstmt.setInt(2, userId);
 
-			pstmt.executeUpdate();
+			int i = pstmt.executeUpdate();
 
-			f = true;
+			if (i == 1) {
+				f = true;
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -128,5 +132,4 @@ public class UserDAO {
 
 		return f;
 	}
-
 }
